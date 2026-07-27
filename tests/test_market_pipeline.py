@@ -2,6 +2,7 @@ from pathlib import Path
 
 from src.collectors.mock import MockCollector
 from src.core.database import Database
+from src.events.event_bus import EventBus
 from src.services.market_pipeline import MarketPipeline
 from src.services.quote_services import QuoteService
 from src.storage.market_quote_repository import MarketQuoteRepository
@@ -19,6 +20,7 @@ def test_market_pipeline_collects_and_saves_quotes(
     quote_service = QuoteService(
         collector=MockCollector(),
         repository=repository,
+        event_bus=EventBus(),
     )
 
     pipeline = MarketPipeline(

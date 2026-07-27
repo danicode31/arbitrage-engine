@@ -5,6 +5,8 @@ import pytest
 from src.collectors.base import BaseCollector
 from src.collectors.mock import MockCollector
 from src.core.database import Database
+from src.events.event_bus import EventBus
+from src.events.market_events import QuotesCollectedEvent
 from src.models.market import MarketQuote
 from src.services.quote_services import QuoteService
 from src.storage.market_quote_repository import MarketQuoteRepository
@@ -41,6 +43,7 @@ def test_quote_service_collects_and_persists_quotes(
     service = QuoteService(
         collector=collector,
         repository=repository,
+        event_bus=EventBus(),
     )
 
     quotes = service.collect()
@@ -65,6 +68,7 @@ def test_latest_quotes_returns_a_copy(
     service = QuoteService(
         collector=MockCollector(),
         repository=repository,
+        event_bus=EventBus(),
     )
 
     service.collect()
@@ -90,6 +94,7 @@ def test_quote_service_disconnects_when_collection_fails(
     service = QuoteService(
         collector=collector,
         repository=repository,
+        event_bus=EventBus(),
     )
 
     with pytest.raises(
@@ -101,5 +106,38 @@ def test_quote_service_disconnects_when_collection_fails(
     assert collector.is_connected is False
     assert repository.count() == 0
     assert service.latest_quotes() == []
+
+    database.disconnect()
+
+
+def test_quote_service_publishes_event(
+    tmp_path: Path,
+) -> None:
+    database = Database(str(tmp_path / "test_arbitrage.db"))
+    database.connect()
+    database.initialize()
+
+    repository = MarketQuoteRepository(database)
+    event_bus = EventBus()
+    received_events: list[QuotesCollectedEvent] = []
+
+    def handler(event: QuotesCollectedEvent) -> None:
+        received_events.append(event)
+
+    event_bus.subscribe(
+        QuotesCollectedEvent,
+        handler,
+    )
+
+    service = QuoteService(
+        collector=MockCollector(),
+        repository=repository,
+        event_bus=event_bus,
+    )
+
+    service.collect()
+
+    assert len(received_events) == 1
+    assert len(received_events[0].quotes) == 5
 
     database.disconnect()

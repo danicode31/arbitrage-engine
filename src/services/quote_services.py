@@ -1,5 +1,7 @@
 from src.collectors.base import BaseCollector
 from src.core.logger import get_logger
+from src.events.event_bus import EventBus
+from src.events.market_events import QuotesCollectedEvent
 from src.models.market import MarketQuote
 from src.storage.market_quote_repository import MarketQuoteRepository
 
@@ -13,14 +15,14 @@ class QuoteService:
         self,
         collector: BaseCollector,
         repository: MarketQuoteRepository,
+        event_bus: EventBus,
     ) -> None:
         self._collector = collector
         self._repository = repository
+        self._event_bus = event_bus
         self._latest_quotes: list[MarketQuote] = []
 
     def collect(self) -> list[MarketQuote]:
-        """Obtiene cotizaciones, las persiste y actualiza el estado en memoria."""
-
         logger.info("Iniciando captura de cotizaciones.")
 
         try:
@@ -30,6 +32,11 @@ class QuoteService:
 
             self._repository.save_many(quotes)
             self._latest_quotes = list(quotes)
+
+            event = QuotesCollectedEvent(
+                quotes=list(quotes),
+            )
+            self._event_bus.publish(event)
 
             logger.info(
                 "Cotizaciones capturadas y persistidas: %s",
@@ -44,6 +51,4 @@ class QuoteService:
             self._collector.disconnect()
 
     def latest_quotes(self) -> list[MarketQuote]:
-        """Devuelve una copia de las últimas cotizaciones capturadas."""
-
         return list(self._latest_quotes)
