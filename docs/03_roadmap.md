@@ -42,10 +42,21 @@
 - [ ] Manejo centralizado de errores
 - [ ] Métricas de ejecución
 
-## Sprint 4 - Motor de arbitraje
+## Sprint 4
 
-- [ ] Modelo `ArbitrageOpportunity`
-- [ ] Estrategia base
-- [ ] Cálculo de spread neto
-- [ ] Comisiones configurables
+### Motor de arbitraje
+
+- [x] ArbitrageOpportunity
+- [x] ArbitrageEngine
+- [x] BaseStrategy
+- [x] CrossMarketArbitrageStrategy
+- [x] Tests del motor
+- [x] Tests de estrategia
+
+Pendiente:
+
+- [ ] Costos
+- [ ] Comisiones
+- [ ] Rentabilidad %
+- [ ] Configuración por mercado
 - [ ] Alertas

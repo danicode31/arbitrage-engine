@@ -3,6 +3,7 @@ from src.core.database import Database
 from src.core.logger import get_logger
 from src.services.market_pipeline import MarketPipeline
 from src.services.market_scheduler import MarketScheduler
+from src.services.quote_services import QuoteService
 from src.storage.market_quote_repository import MarketQuoteRepository
 
 logger = get_logger(__name__)
@@ -17,9 +18,13 @@ def main() -> None:
 
         repository = MarketQuoteRepository(database)
 
-        pipeline = MarketPipeline(
+        quote_service = QuoteService(
             collector=MockCollector(),
             repository=repository,
+        )
+
+        pipeline = MarketPipeline(
+            quote_service=quote_service,
         )
 
         scheduler = MarketScheduler(
@@ -37,6 +42,10 @@ def main() -> None:
         logger.info(
             "Total histórico de cotizaciones: %s",
             repository.count(),
+        )
+        logger.info(
+            "Últimas cotizaciones disponibles: %s",
+            len(quote_service.latest_quotes()),
         )
     finally:
         database.disconnect()
