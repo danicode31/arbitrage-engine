@@ -2,27 +2,19 @@
 name = "arbitrage-engine"
 version = "0.1.0"
 description = "Motor de detección de oportunidades de arbitraje financiero"
-authors = [
-    {name = "Daniel Taboada"}
-]
 requires-python = ">=3.12"
-
 
 [tool.black]
 line-length = 88
-
 
 [tool.ruff]
 line-length = 88
 target-version = "py312"
 
-
 [tool.mypy]
 python_version = "3.12"
 strict = true
 
-
 [tool.pytest.ini_options]
-pythonpath = [
-    "src"
-]
+pythonpath = ["."]
+testpaths = ["tests"]
