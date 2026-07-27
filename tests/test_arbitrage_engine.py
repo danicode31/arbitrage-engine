@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from src.models.market import MarketQuote
 from src.services.arbitrage_engine import ArbitrageEngine
-from src.strategies.dummy_strategy import DummyArbitrageStrategy
+from src.strategies.cross_market import CrossMarketArbitrageStrategy
 
 
 def test_engine_detects_opportunity() -> None:
@@ -27,7 +27,7 @@ def test_engine_detects_opportunity() -> None:
         ),
     ]
 
-    engine = ArbitrageEngine(strategies=[DummyArbitrageStrategy()])
+    engine = ArbitrageEngine(strategies=[CrossMarketArbitrageStrategy()])
 
     opportunities = engine.analyze(quotes)
 
@@ -58,7 +58,7 @@ def test_engine_returns_empty_list_without_spread() -> None:
         ),
     ]
 
-    engine = ArbitrageEngine(strategies=[DummyArbitrageStrategy()])
+    engine = ArbitrageEngine(strategies=[CrossMarketArbitrageStrategy()])
 
     opportunities = engine.analyze(quotes)
 
