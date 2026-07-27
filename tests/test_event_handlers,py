@@ -1,0 +1,70 @@
+from decimal import Decimal
+
+from src.events.handlers import (
+    ArbitrageEventHandler,
+    MetricsEventHandler,
+)
+from src.events.market_events import QuotesCollectedEvent
+from src.metrics.registry import MetricsRegistry
+from src.models.market import MarketQuote
+from src.services.arbitrage_engine import ArbitrageEngine
+from src.strategies.cross_market import (
+    CrossMarketArbitrageStrategy,
+)
+
+
+def create_quote(
+    market: str,
+    bid: str,
+    ask: str,
+) -> MarketQuote:
+    return MarketQuote(
+        symbol="GGAL",
+        market=market,
+        bid=Decimal(bid),
+        ask=Decimal(ask),
+        last=Decimal(bid),
+        bid_size=100,
+        ask_size=100,
+    )
+
+
+def create_event() -> QuotesCollectedEvent:
+    return QuotesCollectedEvent(
+        quotes=[
+            create_quote("BYMA", "8190", "8200"),
+            create_quote("NYSE", "8350", "8360"),
+        ]
+    )
+
+
+def test_metrics_handler_records_quotes() -> None:
+    registry = MetricsRegistry()
+    handler = MetricsEventHandler(registry)
+
+    handler.handle(create_event())
+
+    metrics = registry.snapshot()
+
+    assert metrics["quote_events"] == 1
+    assert metrics["quotes_collected"] == 2
+
+
+def test_arbitrage_handler_records_engine_metrics() -> None:
+    registry = MetricsRegistry()
+
+    engine = ArbitrageEngine(
+        strategies=[CrossMarketArbitrageStrategy()]
+    )
+
+    handler = ArbitrageEventHandler(
+        engine=engine,
+        registry=registry,
+    )
+
+    handler.handle(create_event())
+
+    metrics = registry.snapshot()
+
+    assert metrics["engine_runs"] == 1
+    assert metrics["opportunities_detected"] == 1
