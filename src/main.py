@@ -7,21 +7,21 @@ logger = get_logger(__name__)
 def main() -> None:
     collector = MockCollector()
 
-    collector.connect()
+    try:
+        collector.connect()
+        quotes = collector.get_quotes()
 
-    quotes = collector.get_quotes()
-
-    for quote in quotes:
-        logger.info(
-            "%s | Bid=%s Ask=%s Last=%s Spread=%s",
-            quote.symbol,
-            quote.bid,
-            quote.ask,
-            quote.last,
-            quote.spread,
-        )
-
-    collector.disconnect()
+        for quote in quotes:
+            logger.info(
+                "%s | Bid=%s Ask=%s Last=%s Spread=%s",
+                quote.symbol,
+                quote.bid,
+                quote.ask,
+                quote.last,
+                quote.spread,
+            )
+    finally:
+        collector.disconnect()
 
 
 if __name__ == "__main__":
