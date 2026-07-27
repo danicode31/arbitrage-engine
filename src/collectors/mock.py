@@ -1,5 +1,6 @@
 from decimal import Decimal
 from random import randint
+from typing import ClassVar
 
 from src.collectors.base import BaseCollector
 from src.core.logger import get_logger
@@ -11,7 +12,7 @@ logger = get_logger(__name__)
 class MockCollector(BaseCollector):
     """Collector que genera cotizaciones simuladas para varios activos."""
 
-    BASE_PRICES: dict[str, Decimal] = {
+    BASE_PRICES: ClassVar[dict[str, Decimal]] = {
         "GGAL": Decimal("8200"),
         "YPFD": Decimal("47000"),
         "PAMP": Decimal("4100"),

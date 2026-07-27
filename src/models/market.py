@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class MarketQuote(BaseModel):
@@ -24,7 +24,11 @@ class MarketQuote(BaseModel):
 
     @field_validator("ask")
     @classmethod
-    def validate_ask(cls, ask: Decimal, info) -> Decimal:
+    def validate_ask(
+        cls,
+        ask: Decimal,
+        info: ValidationInfo,
+    ) -> Decimal:
         bid = info.data.get("bid")
 
         if bid is not None and ask < bid:
