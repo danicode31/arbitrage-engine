@@ -31,3 +31,21 @@ Motor de detección de oportunidades de arbitraje en mercados financieros utiliz
 - MyPy
 
 Cobertura de tests en crecimiento en cada sprint.
+
+# Estado del Proyecto
+
+## Arquitectura implementada
+
+- ✅ Configuration (.env)
+- ✅ Logging
+- ✅ DuckDB Persistence
+- ✅ Repository Pattern
+- ✅ Collector Pattern
+- ✅ QuoteService
+- ✅ Market Pipeline
+- ✅ Scheduler
+- ✅ Event Bus
+- ✅ Arbitrage Engine
+- ✅ Strategy Pattern
+- ✅ Metrics Registry
+- ✅ Application Bootstrap

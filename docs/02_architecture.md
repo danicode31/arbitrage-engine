@@ -2,42 +2,36 @@
 
 El proyecto sigue una arquitectura por capas inspirada en Clean Architecture, donde cada componente tiene una única responsabilidad.
 
-```text
-                    +----------------------+
-                    |    Collectors        |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    |   MarketPipeline     |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    |   Repositories       |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    |      DuckDB          |
-                    +----------------------+
-
-                               |
-
-                    +----------------------+
-                    | Arbitrage Engine     |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    |     Strategies       |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Opportunities        |
-                    +----------------------+
-```
+                  ArbitrageApplication
+                           │
+        ┌──────────────────┴──────────────────┐
+        │                                     │
+    Scheduler                           MetricsRegistry
+        │
+        ▼
+ MarketPipeline
+        │
+        ▼
+  QuoteService
+        │
+        ├───────────────┐
+        │               │
+        ▼               ▼
+ Collector         Repository
+        │               │
+        └──────► DuckDB ◄──────┐
+                               │
+                           EventBus
+                               │
+            ┌──────────────────┴──────────────────┐
+            ▼                                     ▼
+ ArbitrageEventHandler                 MetricsEventHandler
+            │
+            ▼
+   ArbitrageEngine
+            │
+            ▼
+     Strategy Pattern
 
 ## Principios
 
