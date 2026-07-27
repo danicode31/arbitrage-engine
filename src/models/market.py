@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator
@@ -15,7 +15,7 @@ class MarketQuote(BaseModel):
     bid_size: Decimal = Field(default=Decimal("0"), ge=0)
     ask_size: Decimal = Field(default=Decimal("0"), ge=0)
 
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("symbol", "market")
     @classmethod

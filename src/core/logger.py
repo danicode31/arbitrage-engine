@@ -2,7 +2,6 @@ import logging
 
 from src.core.config import BASE_DIR, settings
 
-
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
