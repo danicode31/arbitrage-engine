@@ -1,31 +1,38 @@
 from src.collectors.mock import MockCollector
 from src.core.database import Database
 from src.core.logger import get_logger
+from src.services.market_pipeline import MarketPipeline
 from src.storage.market_quote_repository import MarketQuoteRepository
 
 logger = get_logger(__name__)
 
 
 def main() -> None:
-    collector = MockCollector()
     database = Database()
 
     try:
         database.connect()
         database.initialize()
 
-        collector.connect()
-        quotes = collector.get_quotes()
-
         repository = MarketQuoteRepository(database)
-        repository.save_many(quotes)
+        collector = MockCollector()
+
+        pipeline = MarketPipeline(
+            collector=collector,
+            repository=repository,
+        )
+
+        processed_quotes = pipeline.run()
 
         logger.info(
-            "Total de cotizaciones guardadas: %s",
+            "Total histórico de cotizaciones: %s",
             repository.count(),
         )
+        logger.info(
+            "Cotizaciones procesadas en esta ejecución: %s",
+            processed_quotes,
+        )
     finally:
-        collector.disconnect()
         database.disconnect()
 
 
