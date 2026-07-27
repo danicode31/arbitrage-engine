@@ -1,7 +1,15 @@
 # TODO
 
-- [ ] Mock Collector
-- [ ] DuckDB
-- [ ] API IOL
+- [x] Configuración
+- [x] Logger
+- [x] MarketQuote
+- [x] MockCollector
+- [x] DuckDB
+- [x] MarketQuoteRepository
+- [ ] MarketPipeline
+- [ ] Scheduler
+- [ ] Motor de arbitraje
+- [ ] Configuración de comisiones
 - [ ] Dashboard
-- [ ] Telegram Alerts
+- [ ] API real
+- [ ] Alertas
